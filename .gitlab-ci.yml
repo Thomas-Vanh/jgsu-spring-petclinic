@@ -36,7 +36,6 @@ build: # task: create variant with AutoBuild! Build through Dockerfile? overwrit
     TRACE: "false"
     AUTO_DEVOPS_DEPLOY_DEBUG: "false"
   script:
-<<<<<<< HEAD
     - mvn clean install -DskipTests=false # -DskipTests to shorten the build
     - mvn package -DskipTests=false -Dmaven.repo.local=./.m2 # -DskipTests
   cache:
@@ -49,51 +48,3 @@ build: # task: create variant with AutoBuild! Build through Dockerfile? overwrit
     - "Dockerfile"
     - "target/spring-petclinic-1.5.4.jar"
 
-=======
-    - ./mvnw compile $MAVEN_OPTS $MAVEN_CLI_OPTS clean package -DskipTests=true
-  image: maven:3.8-openjdk-11
-test_job:
-  stage: test
-  script:
-    - ./mvnw test $MAVEN_OPTS $MAVEN_CLI_OPTS 
-  image: maven:3.8-openjdk-11
-  #artifacts:
-  #  name: "Maven artifacts from $CI_PROJECT_NAME on $CI_COMMIT_REF_SLUG"
-  #  paths:
-  #    - "**/target"
-  #  reports:
-  #    # declare the JUnit reports (recursive pattern for multi-module projects)
-  #    junit:
-  #      - "**/target/*-reports/TEST-*.xml"
-
-code_quality_job:
-    stage: quality
-    image: docker:stable
-    allow_failure: true
-    services:
-      - docker:stable-dind
-    script:
-      - mkdir codequality-results
-      - docker run
-          --env CODECLIMATE_CODE="$PWD"
-          --volume "$PWD":/code
-          --volume /var/run/docker.sock:/var/run/docker.sock
-          --volume /tmp/cc:/tmp/cc
-          codeclimate/codeclimate analyze -f html > ./codequality-results/index.html
-    artifacts:
-      paths:
-        - codequality-results
-
-# packages_job:
-#   stage: deploy
-#   services:
-#     - docker:18.09.7-dind
-#   variables:
-#     DOCKER_HOST: tcp://docker:2375
-#   image: laurentgrangeau/oc-devops:latest
-#   #image: openjdk:8-alpine
-#   script:
-#     - apk add --no-cache docker openssh-client openssl-dev
-#     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-#     - ./mvnw install -PbuildDocker -DskipTests=true -DpushImage $MAVEN_OPTS $MAVEN_CLI_OPTS
->>>>>>> e99324f043dfb9dd217fcd244b3db06060494ebb
