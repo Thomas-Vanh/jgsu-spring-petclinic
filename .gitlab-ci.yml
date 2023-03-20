@@ -34,19 +34,12 @@ build_job:
   stage: build
   script:
     - ./mvnw compile $MAVEN_OPTS $MAVEN_CLI_OPTS clean package -DskipTests=true
-  #image: maven:3.8-openjdk-11
-  image: laurentgrangeau/oc-devops:latest
-  #artifacts:
-  #  name: "Maven artifacts from $CI_PROJECT_NAME on $CI_COMMIT_REF_SLUG"
-  #  paths:
-  #    - "**/target"
-
+  image: maven:3.8-openjdk-11
 test_job:
   stage: test
   script:
     - ./mvnw test $MAVEN_OPTS $MAVEN_CLI_OPTS 
-  image: laurentgrangeau/oc-devops:latest
-  #image: maven:3.8-openjdk-11
+  image: maven:3.8-openjdk-11
   #artifacts:
   #  name: "Maven artifacts from $CI_PROJECT_NAME on $CI_COMMIT_REF_SLUG"
   #  paths:
