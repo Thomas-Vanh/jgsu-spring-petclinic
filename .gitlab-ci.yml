@@ -1,10 +1,5 @@
-default:
-  tags: [saas-linux-large-amd64] # do not waste your time waiting
-
 stages:
   - build
-  - test 
-  - config
 
 variables:
   # This will suppress any download for dependencies and plugins or upload messages which would clutter the console log.
@@ -26,25 +21,19 @@ variables:
     -DinstallAtEnd=true
     -DdeployAtEnd=true  
 
-build: # task: create variant with AutoBuild! Build through Dockerfile? overwriting the ADO build job which does build and push
+java-build:
+  # select the most appropriate image for your project
+  image: maven:3.8-openjdk-11
   stage: build
-  image: maven:3-jdk-8-slim # maven:3-jdk-11-slim
-  variables: #the log is too long so I shorten it with following vars
-    CI_DEBUG_TRACE: "false"
-    JOB_TRACE: "false"
-    SECURE_LOG_LEVEL: "false"
-    TRACE: "false"
-    AUTO_DEVOPS_DEPLOY_DEBUG: "false"
-  script:
-    - mvn clean install -DskipTests=false # -DskipTests to shorten the build
-    - mvn package -DskipTests=false -Dmaven.repo.local=./.m2 # -DskipTests
+  # Cache downloaded dependencies and plugins between builds.
+  # The key here separates one cache per branch/tag ($CI_COMMIT_REF_SLUG)
   cache:
-    policy: push
-    key: ${CI_COMMIT_SHA}
+    key: "maven-$CI_COMMIT_REF_SLUG"
     paths:
-      - .m2
+      - .m2/repository
+  script:
+    - mvn $MAVEN_CLI_OPTS package -DskipTests=true
   artifacts:
+    name: "Maven artifacts from $CI_PROJECT_NAME on $CI_COMMIT_REF_SLUG"
     paths:
-    - "Dockerfile"
-    - "target/spring-petclinic-1.5.4.jar"
-
+      - "**/target"
