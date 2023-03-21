@@ -31,20 +31,18 @@ maven-test:
   artifacts:
     paths:
     - test.log
-release:
-  stage: release
-  variables:
-    ADDITIONAL_CA_CERT_BUNDLE: |
-        -----BEGIN CERTIFICATE-----
-        MIIGqTCCBJGgAwIBAgIQI7AVxxVwg2kch4d56XNdDjANBgkqhkiG9w0BAQsFADCB
-        ...
-        jWgmPqF3vUbZE0EyScetPJquRFRKIesyJuBFMAs=
-        -----END CERTIFICATE-----
+
+release_job:
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never                                  # Do not run this job in a tag pipeline
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH  # Run this job when commits are pushed or merged to the default branch
   script:
     - echo "Create release"
   release:
-    name: 'My awesome release'
+    name: 'Petclinic'
     tag_name: '$CI_COMMIT_TAG'
+
 
 docker-build:
   stage: package
