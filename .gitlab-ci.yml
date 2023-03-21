@@ -9,7 +9,7 @@ variables:
 stages:
 - build
 - test
-#- package
+- package
 #- deploy
 
 maven-build:
@@ -32,11 +32,16 @@ maven-test:
     paths:
     - test.log
 
-#docker-build:
-#  stage: package
-#  script:
-#  - docker build -t registry.gitlab.com/italiandevopsgroup/petclinic .
-#  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-#  - docker push registry.gitlab.com/italiandevopsgroup/petclinic
+docker-build:
+  stage: package
+  before_script:
+    - export IMAGE=$CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME
+    - export WEB_IMAGE=$IMAGE/Petclinic_build
+  script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker-compose -f docker-compose-ci.yml build
+    - docker tag petclinic_pipe:latest $WEB_IMAGE:latest
+    - docker images
+    - docker push $WEB_IMAGE:latest
 
 
