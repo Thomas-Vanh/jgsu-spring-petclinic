@@ -37,7 +37,6 @@ maven_release:
   stage: release
   only:
     - master
-  when: manual
   before_script:
     - mkdir -p ~/.ssh/
     - cp $DEPLOY_PRIVATE_KEY ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
@@ -57,7 +56,7 @@ docker-build:
     - export IMAGE=$CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME
     - export WEB_IMAGE=$IMAGE/Petclinic_build
   script:
-  - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker-compose docker-compose-ci.yml build
     - docker tag petclinic_pipe:latest $WEB_IMAGE:latest
     - docker images
