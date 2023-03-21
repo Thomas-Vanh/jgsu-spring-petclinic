@@ -6,7 +6,7 @@ variables:
 
 cache:
   paths:
-    - .m2/repository/
+    - ./repository/
 
 stages:
 - build
@@ -16,12 +16,12 @@ stages:
 build:
   stage: build
   script:
-    - mvn $MAVEN_CLI_OPTS compile
+    - ./mvnw $MAVEN_CLI_OPTS compile
 
 test:
   stage: test
   script:
-    - mvn $MAVEN_CLI_OPTS test
+    - ./mvnw $MAVEN_CLI_OPTS test
 
 deploy:
   stage: deploy
