@@ -58,7 +58,7 @@ docker-build:
     - export WEB_IMAGE=$IMAGE/Petclinic_build
   script:
   - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
-    - docker-compose -f docker-compose-ci.yml build
+    - docker-compose docker-compose-ci.yml build
     - docker tag petclinic_pipe:latest $WEB_IMAGE:latest
     - docker images
     - docker push $WEB_IMAGE:latest
