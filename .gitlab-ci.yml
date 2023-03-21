@@ -32,16 +32,23 @@ maven-test:
     paths:
     - test.log
 
-release_job:
-  rules:
-    - if: $CI_COMMIT_TAG
-      when: never                                  # Do not run this job in a tag pipeline
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH  # Run this job when commits are pushed or merged to the default branch
+maven_release:
+  image: openjdk:17
+  stage: release
+  only:
+    - master
+  when: manual
+  before_script:
+    - mkdir -p ~/.ssh/
+    - cp $DEPLOY_PRIVATE_KEY ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+    - cp $KNOWN_HOSTS ~/.ssh/known_hosts
+    - apt-get update && apt-get install -y git
+    - git config --global user.email "noreply@your.gitlab.host"
+    - git config --global user.name "GitLab CI"
+    - git checkout -B "$CI_COMMIT_REF_NAME"
   script:
-    - echo "Create release"
-  release:
-    name: 'Petclinic'
-    tag_name: '$CI_COMMIT_TAG'
+    - ./mvnw release:prepare release:perform -s $SETTINGS_XML
+
 
 
 docker-build:
