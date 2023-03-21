@@ -1,12 +1,11 @@
-image: eclipse-temurin:17-jdk-jammy
+
 
 variables:
-  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
 cache:
   paths:
-    - ./repository/
+    - .m2/repository/
 
 stages:
 - build
@@ -16,13 +15,15 @@ stages:
 build:
   stage: build
   script:
-    - ./mvnw $MAVEN_CLI_OPTS compile
+    - ./mvnw  dependency:resolve
+    - ./mvnw package
+  image: eclipse-temurin:17-jre-jammy
 
 test:
   stage: test
   script:
-    - ./mvnw $MAVEN_CLI_OPTS test
-
+    - ./mvnw  test
+  image: eclipse-temurin:17-jre-jammy
 deploy:
   stage: deploy
   image: docker:20.10.7
