@@ -15,11 +15,11 @@ stages:
 maven-build:
   tags:
     - docker
-  image: maven:3-jre-11
+  image: eclipse-temurin:17-jdk-jammy
   stage: build
   script:
-  - mvn -Dmaven.test.skip=true package -B > build.log
-  - mvn test-compile
+  - ./mvnw package > build.log
+  - ./mvnw test-compile
   artifacts:
     paths:
     - target/*
@@ -28,10 +28,10 @@ maven-build:
 maven-test:
   tags:
     - docker
-  image: maven:3-jre-11
+  image: eclipse-temurin:17-jdk-jammy
   stage: test
   script:
-  - mvn surefire:test > test.log
+  - ./mvnw test > test.log
   artifacts:
     paths:
     - test.log
