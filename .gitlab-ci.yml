@@ -39,6 +39,9 @@ maven-test:
     - test.log
 
 docker_build:
+    services:
+    - name: docker:dind
+      entrypoint: ["dockerd-entrypoint.sh", "--tls=false"]
     tags:
     - docker
     stage: package
