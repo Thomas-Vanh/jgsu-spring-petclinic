@@ -13,7 +13,9 @@ stages:
 - package
 
 maven-build:
-  image: maven:3-jdk-8
+  tags:
+    - docker
+  image: maven:3-jre-11
   stage: build
   script:
   - mvn -Dmaven.test.skip=true package -B > build.log
@@ -24,7 +26,9 @@ maven-build:
     - build.log
 
 maven-test:
-  image: maven:3-jdk-8
+  tags:
+    - docker
+  image: maven:3-jre-11
   stage: test
   script:
   - mvn surefire:test > test.log
@@ -41,6 +45,8 @@ deploy:
 
 
 build:
+  tags:
+    - shell
   image: docker:20.10.16
   stage: package
   services:
