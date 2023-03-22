@@ -9,9 +9,10 @@ variables:
 stages:
 - build
 - test
-- deploy
-- release
 - package
+- release
+- deploy
+
 
 maven-build:
   tags:
@@ -37,10 +38,21 @@ maven-test:
     paths:
     - test.log
 
+docker_build:
+    tags:
+    - docker
+    stage: package
+    script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:latest
+
 
 deploy:
   stage: deploy
-  script: echo "Define your deployment script!"
+  script:
+      docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY &&
+      docker run -d -p 5000:8000 $CONTAINER_IMAGE"
   environment: production
 
 release_job:
@@ -58,12 +70,4 @@ release_job:
     ref: '$CI_COMMIT_SHA'                          # The tag is created from the pipeline SHA.
 
 
-docker_build:
-    tags:
-    - docker
-    stage: package
-    script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - docker build -t $CI_REGISTRY_IMAGE:latest .
-    - docker push $CI_REGISTRY_IMAGE:latest
 
