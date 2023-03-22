@@ -44,17 +44,13 @@ deploy:
 
 
 
-build:
-  tags:
+docker_build:
+    tags:
     - docker
-  image: tmaier/docker-compose:latest
-  stage: package
-  services:
-    - docker:20.10.16-dind
-  before_script:
-    - docker info
-    - docker-compose --version
-  script:
-    - docker-compose build
-
+    image: docker:20.10.16-dind
+    stage: package
+    script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:latest
 
