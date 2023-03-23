@@ -16,12 +16,12 @@ maven-build:
   image: eclipse-temurin:17-jdk-jammy
   stage: build
   script:
-  - ./mvnw package > build.log
+  - ./mvnw package 
   - ./mvnw test-compile
   artifacts:
     paths:
     - target/*
-    - build.log
+
 
 maven-test:
   tags:
@@ -29,10 +29,7 @@ maven-test:
   image: eclipse-temurin:17-jdk-jammy
   stage: test
   script:
-  - ./mvnw test > test.log
-  artifacts:
-    paths:
-    - test.log
+  - ./mvnw test
 
 docker_build:
     services:
