@@ -58,7 +58,7 @@ docker_build:
 deploy:
   stage: deploy
   script:
-      docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY_PASSWORD $CI_REGISTRY &&
+      docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY_PASSWORD" registry.gitlab.com/becode_ci/petclinic/
       docker run -d -p 5000:8000 $CONTAINER_IMAGE"
   environment: production
 
