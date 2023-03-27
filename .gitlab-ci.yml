@@ -1,8 +1,12 @@
 image: docker:20.10.16-dind
+services:
+  - name: docker:20.10.16-dind
+    alias: thedockerhost
+    entrypoint: ["dockerd-entrypoint.sh", "--tls=false"]
 variables:
-  DOCKER_DRIVER: overlay2
-  DOCKER_HOST: tcp://docker:2375
-  DOCKER_TLS_CERTDIR: ""
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://thedockerhost:2375/
+    DOCKER_TLS_CERTDIR: ""
 cache:
   paths:
     - $CI_PROJECT_DIRECTORY/.m2/repository/
