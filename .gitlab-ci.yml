@@ -69,8 +69,11 @@ deploy:
       docker run -d -p 5000:8000 $CONTAINER_IMAGE"
   environment: production
 
-release_job:
+release-job:
   stage: release
+  needs:
+    - job: maven-build
+      artifacts: true
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   rules:
     - if: $CI_COMMIT_TAG
