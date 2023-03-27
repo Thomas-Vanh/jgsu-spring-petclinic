@@ -1,11 +1,10 @@
 image: docker:20.10.16-dind
 services:
   - name: docker:20.10.16-dind
-    alias: thedockerhost
     entrypoint: ["dockerd-entrypoint.sh", "--tls=false"]
 variables:
     DOCKER_DRIVER: overlay2
-    DOCKER_HOST: tcp://thedockerhost:2375/
+    DOCKER_HOST: tcp://localhost:2375/
     DOCKER_TLS_CERTDIR: ""
 cache:
   paths:
@@ -17,6 +16,21 @@ stages:
 - package
 - release
 - deploy
+
+sonarqube-check:
+  image: maven:3.6.3-jdk-11
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache
+  script: 
+    - mvn verify sonar:sonar -Dsonar.projectKey=becode_ci_petclinic_AYck1X01GS7A0FLcdY5_
+  allow_failure: true
+  only:
+    - main
 
 
 maven-build:
